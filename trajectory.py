@@ -103,4 +103,4 @@ def plot_trajectory():
     plt.savefig("trajectory_plot.png", dpi=300)
 
 if __name__ == "__main__":
-    plot_trajectory()
+    plot_trajectory() 
