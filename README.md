@@ -67,20 +67,6 @@ Finally, navigation instructions are displayed through an AR interface, overlayi
 ```
 ---
 
-### Scripts:
-
-| Component | File(s) | Role |
-|---|---|---|
-| Config | `config.py` | Central PPO hyperparameters & reward shaping |
-| Data Prep | `download_and_prepare_uji.py` | Downloads dataset, builds graph topology |
-| Graph Rebuild | `rebuild-graph.py`, `prune_graph.py` | k-NN graph construction, edge pruning |
-| Classifier | `train_part1_hierarchical_v2.py` | Hierarchical WiFi fingerprint model |
-| RL Agent | `train_part2_hierarchical.py` | PPO agent trained on topology graph |
-| Export | `converter-flutter.py`, `test.py` | ONNX + JSON export for mobile |
-| Mobile App | `thesis_ar_nav/` | Flutter AR navigation UI |
-
----
-
 ## Dataset — UJIIndoorLoc
 
 - **Source:** [UCI ML Repository — UJIIndoorLoc](https://archive.ics.uci.edu/dataset/310/ujiindoorloc)
@@ -119,8 +105,45 @@ The `download_and_prepare_uji.py` script handles everything — download, extrac
 
 ## Execution Steps:
 
-### Prereq: Python 3.9+, Flutter SDK 3.x (`sdk: ^3.11.4`), Mobile phone with with WiFi scanning support
+>> Prereq: Python 3.9+, Flutter SDK 3.x (`sdk: ^3.11.4`), Mobile phone with with WiFi scanning support
 
+## Required Dependencies: 
+
+### Python
+| Package | Purpose |
+|---|---|
+| `torch` | Model training (classifier + PPO) |
+| `numpy`, `pandas` | Data processing |
+| `scikit-learn` | Feature scaling, preprocessing |
+| `networkx` | Graph construction & pathfinding |
+| `matplotlib`, `seaborn` | Visualization |
+| `onnx`, `onnxruntime` | Mobile model export |
+| `tqdm` | Training progress bars |
+
+### Flutter
+| Package | Purpose |
+|---|---|
+| `tflite_flutter` | On-device AI inference |
+| `wifi_scan` | WiFi RSSI scanning |
+| `camera` | AR camera feed |
+| `flutter_compass` | Device orientation for AR arrow |
+| `vector_math` | 3D bearing calculations |
+
+---
+
+### Scripts:
+
+| Component | File(s) | Role |
+|---|---|---|
+| Config | `config.py` | Central PPO hyperparameters & reward shaping |
+| Data Prep | `download_and_prepare_uji.py` | Downloads dataset, builds graph topology |
+| Graph Rebuild | `rebuild-graph.py`, `prune_graph.py` | k-NN graph construction, edge pruning |
+| Classifier | `train_part1_hierarchical_v2.py` | Hierarchical WiFi fingerprint model |
+| RL Agent | `train_part2_hierarchical.py` | PPO agent trained on topology graph |
+| Export | `converter-flutter.py`, `test.py` | ONNX + JSON export for mobile |
+| Mobile App | `thesis_ar_nav/` | Flutter AR navigation UI |
+
+---
 
 ### Part 1 — Python: Model training:
 
@@ -174,7 +197,7 @@ python train_part2_hierarchical.py
 
 Output: `models/ppo_agent.pth`, `models/training_history.png`
 
-#### Step 6 — Visualize a Navigation Trajectory (Optional) --> genrates a navigation map (visual)
+#### Step 6 — Visualize a Navigation Trajectory (Optional) --> generates a navigation map (visual)
 
 ```bash
 python trajectory.py
@@ -186,7 +209,8 @@ Output: `trajectory_plot.png` — a figure showing ground truth path vs. AI-pred
 
 ### Part 2 — Export Models for Mobile
 
-#### Step 7 — Export Classifier to ONNX
+#### Step 7 — Export Classifier to ONNX 
+Note: I used google collab for this, since my numpy version(2.4.4) was higher than the one supported for this function (1.21-1.26)
 
 ```bash
 python converter-flutter.py
@@ -209,7 +233,7 @@ cp wifi_tracker.onnx.data thesis_ar_nav/assets/  # if using custom model
 cp map_graph.json thesis_ar_nav/assets/
 ```
 
-> **Note:** Pre-built `.tflite` models and `map_graph.json` are already included in `thesis_ar_nav/assets/`. You only need this step if you retrained the models.
+> **Note:** Pre-built `.tflite` models and `map_graph.json` are already included in `thesis_ar_nav/assets/`. You only need this step if models were retrained.
 
 ---
 
@@ -239,51 +263,3 @@ flutter run
 
 
 ---
-
-## 🛠️ Troubleshooting
-
-**`topology_graph_building0.pkl` not found**
-> Run `python download_and_prepare_uji.py` first, then `python rebuild-graph.py` if the file is still missing.
-
-**Graph has disconnected components**
-> Run `python diagnose_graph.py` to identify components, then `python rebuild-graph.py` to reconnect them using k-NN bridging.
-
-**Flutter: TFLite model fails to load**
-> Ensure `wifi_model.tflite` and `map_graph.json` exist in `thesis_ar_nav/assets/` and are correctly listed in `pubspec.yaml` under `flutter > assets`.
-
-**Flutter: `No Routers Found!` on device**
-> Grant **Location Permission** to the app. Android requires location access for WiFi scanning. Also ensure WiFi is enabled and GPS is turned on.
-
-**`ModuleNotFoundError: train_part1_hierarchical_v2`** (during Part 2 training)
-> Run both scripts from the root `THESIS/` directory, not from a subdirectory.
-
-**ONNX export fails with shape mismatch**
-> Confirm your trained model has `num_rooms = 748`. Check with:
-> ```python
-> import torch; ckpt = torch.load('models/hierarchical_classifier_best.pth'); print(ckpt['num_rooms'])
-> ```
-
----
-
-## Dependencies
-
-### Python
-| Package | Purpose |
-|---|---|
-| `torch` | Model training (classifier + PPO) |
-| `numpy`, `pandas` | Data processing |
-| `scikit-learn` | Feature scaling, preprocessing |
-| `networkx` | Graph construction & pathfinding |
-| `matplotlib`, `seaborn` | Visualization |
-| `onnx`, `onnxruntime` | Mobile model export |
-| `tqdm` | Training progress bars |
-
-### Flutter
-| Package | Purpose |
-|---|---|
-| `tflite_flutter` | On-device AI inference |
-| `wifi_scan` | WiFi RSSI scanning |
-| `camera` | AR camera feed |
-| `flutter_compass` | Device orientation for AR arrow |
-| `vector_math` | 3D bearing calculations |
-
