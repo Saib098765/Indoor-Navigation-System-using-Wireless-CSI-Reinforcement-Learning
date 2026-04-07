@@ -1,11 +1,11 @@
 # Indoor Navigation System using Wireless CSI & Reinforcement Learning
 
 > **Author:** Sai Sleghana Bala  
-> A thesis project implementing a two-stage AI pipeline for GPS-free indoor navigation — combining a WiFi fingerprint classifier with a Proximal Policy Optimization (PPO) reinforcement learning agent — deployed as a real-time AR mobile app.
+> This is my M.tech thesis project implementing a two-stage AI pipeline for GPS-free indoor navigation, combining a WiFi fingerprint classifier with a Proximal Policy Optimization (PPO) reinforcement learning agent - deployed as a real-time AR mobile app.
 
 ---
 
-## 🧭 Overview
+## Overview
 
 Navigating indoor environments such as offices, hospitals, and shopping complexes poses challenges due to the lack of GPS signals and the limitations of physical maps. Traditional GPS-based systems are ineffective indoors, while static maps need to be established at multiple locations and referenced numerous times by the user in order to reach the destination. This project presents an indoor navigation system that uses WiFi Channel State Information (CSI) and reinforcement learning to provide accurate, real-time guidance without relying on GPS.
 The system generates an indoor map by collecting WiFi CSI data from available networks within the environment. WiFi CSI captures the signal characteristics that vary with location, enabling the creation of a unique spatial fingerprint for the indoor space. This network-based map enables precise user localization by matching live CSI readings against the mapped data, thus determining the exact location of the user in the indoor space.
