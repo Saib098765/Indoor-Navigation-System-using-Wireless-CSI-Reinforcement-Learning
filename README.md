@@ -1,4 +1,4 @@
-# 📡 Indoor Navigation System using Wireless CSI & Reinforcement Learning
+# Indoor Navigation System using Wireless CSI & Reinforcement Learning
 
 > **Author:** Sai Sleghana Bala  
 > A thesis project implementing a two-stage AI pipeline for GPS-free indoor navigation — combining a WiFi fingerprint classifier with a Proximal Policy Optimization (PPO) reinforcement learning agent — deployed as a real-time AR mobile app.
@@ -7,18 +7,14 @@
 
 ## 🧭 Overview
 
-GPS fails indoors. This system solves that by turning ambient **WiFi Channel State Information (CSI)** — the signal "fingerprints" already present in any building — into a precise positioning and navigation system.
-
-The pipeline works in two stages:
-
-1. **Localization** — A hierarchical deep neural network reads 128 WiFi RSSI features and predicts the user's current location node on a map graph (building → floor → room).
-2. **Navigation** — A PPO reinforcement learning agent plans the optimal path across the map graph from the current location to a user-selected destination.
-
-The result is a **Flutter-based AR mobile app** that overlays turn-by-turn directions on a live camera feed using a compass-aligned arrow, all without any GPS or internet connection at runtime.
+Navigating indoor environments such as offices, hospitals, and shopping complexes poses challenges due to the lack of GPS signals and the limitations of physical maps. Traditional GPS-based systems are ineffective indoors, while static maps need to be established at multiple locations and referenced numerous times by the user in order to reach the destination. This project presents an indoor navigation system that uses WiFi Channel State Information (CSI) and reinforcement learning to provide accurate, real-time guidance without relying on GPS.
+The system generates an indoor map by collecting WiFi CSI data from available networks within the environment. WiFi CSI captures the signal characteristics that vary with location, enabling the creation of a unique spatial fingerprint for the indoor space. This network-based map enables precise user localization by matching live CSI readings against the mapped data, thus determining the exact location of the user in the indoor space.
+For navigation, users input their destination, and the system employs Proximal Policy Optimization (PPO): a reinforcement learning algorithm, to compute an optimal path from the user location to the entered destination.
+Finally, navigation instructions are displayed through an AR interface, overlaying directional cues onto the user’s real-world view via a mobile device. This immersive approach reduces reliance on physical maps and simplifies wayfinding by providing clear, intuitive guidance. This will also help geriatric and young users who might find existing methods intricate to understand.
 
 ---
 
-## 🏗️ System Architecture
+## System Architecture
 
 ```
 ┌──────────────────────────────────────────────────────────────────┐
@@ -27,11 +23,11 @@ The result is a **Flutter-based AR mobile app** that overlays turn-by-turn direc
 │  UJIIndoorLoc Dataset (UCI)                                      │
 │         │                                                        │
 │         ▼                                                        │
-│  download_and_prepare_uji.py  ──►  uji_data/                    │
-│         │                          ├── uji_train.csv            │
-│         │                          ├── uji_test.csv             │
-│         │                          ├── location_info_*.pkl      │
-│         │                          └── topology_graph_*.pkl     │
+│  download_and_prepare_uji.py  ──►  uji_data/                     │
+│         │                          ├── uji_train.csv             │
+│         │                          ├── uji_test.csv              │
+│         │                          ├── location_info_*.pkl       │
+│         │                          └── topology_graph_*.pkl      │
 │         │                                                        │
 │         ├──► train_part1_hierarchical_v2.py                      │
 │         │         Hierarchical CNN Classifier                    │
@@ -48,8 +44,8 @@ The result is a **Flutter-based AR mobile app** that overlays turn-by-turn direc
 ┌──────────────────────────────────────────────────────────────────┐
 │                      MODEL EXPORT                                │
 │                                                                  │
-│  converter-flutter.py  →  wifi_tracker.onnx                     │
-│  test.py               →  map_graph.json                        │
+│  converter-flutter.py  →  wifi_tracker.onnx                      │
+│  test.py               →  map_graph.json                         │
 │                                                                  │
 └──────────────────────────────────────────────────────────────────┘
 
@@ -59,18 +55,19 @@ The result is a **Flutter-based AR mobile app** that overlays turn-by-turn direc
 │  WiFi Scan (128 RSSI features)                                   │
 │         │                                                        │
 │         ▼                                                        │
-│  ai_engine.dart  ──►  TFLite Interpreter  ──►  Node ID          │
+│  ai_engine.dart  ──►  TFLite Interpreter  ──►  Node ID           │
 │                            │                                     │
 │                            ▼                                     │
-│  navigation_controller.dart  ──►  BFS on map_graph.json         │
+│  navigation_controller.dart  ──►  BFS on map_graph.json          │
 │                            │                                     │
 │                            ▼                                     │
-│  main.dart  ──►  AR Overlay (Camera + Compass Arrow)            │
+│  main.dart  ──►  AR Overlay (Camera + Compass Arrow)             │
 │                                                                  │
 └──────────────────────────────────────────────────────────────────┘
 ```
+---
 
-### Key Components
+### Scripts:
 
 | Component | File(s) | Role |
 |---|---|---|
@@ -84,9 +81,9 @@ The result is a **Flutter-based AR mobile app** that overlays turn-by-turn direc
 
 ---
 
-## 📊 Dataset — UJIIndoorLoc
+## Dataset — UJIIndoorLoc
 
-- **Source:** [UCI ML Repository — UJIIndoorLoc (ID 310)](https://archive.ics.uci.edu/dataset/310/ujiindoorloc)
+- **Source:** [UCI ML Repository — UJIIndoorLoc](https://archive.ics.uci.edu/dataset/310/ujiindoorloc)
 - **Coverage:** 3 university buildings, 5 floors, 748 unique location nodes
 - **Features:** 520 WAP (WiFi Access Point) RSSI readings per sample, compressed to 128 CSI features in this system
 - **Size:** ~19,000 training samples, ~1,100 validation samples
@@ -95,7 +92,7 @@ The `download_and_prepare_uji.py` script handles everything — download, extrac
 
 ---
 
-## ⚙️ Reinforcement Learning Design
+## RL parameters:
 
 | Parameter | Value |
 |---|---|
@@ -119,27 +116,13 @@ The `download_and_prepare_uji.py` script handles everything — download, extrac
 
 ---
 
-## 🖼️ Screenshots
 
-> *(Place your screenshots in this section)*
+## Execution Steps:
 
-| Venue Selection | AR Navigation View | Trajectory Plot |
-|---|---|---|
-| `[screenshot]` | `[screenshot]` | `trajectory_plot.png` |
+### Prereq: Python 3.9+, Flutter SDK 3.x (`sdk: ^3.11.4`), Mobile phone with with WiFi scanning support
 
----
 
-## 🚀 Execution Guide
-
-### Prerequisites
-
-- Python 3.9+
-- Flutter SDK 3.x (`sdk: ^3.11.4`)
-- Android device or emulator (API 21+) with WiFi scanning support
-
----
-
-### Part 1 — Python: Training the Models
+### Part 1 — Python: Model training:
 
 #### Step 1 — Install Dependencies
 
@@ -147,7 +130,7 @@ The `download_and_prepare_uji.py` script handles everything — download, extrac
 pip install -r requirements.txt
 ```
 
-#### Step 2 — Download and Prepare the Dataset
+#### Step 2 — Download and prep the data
 
 This downloads the UJIIndoorLoc dataset from UCI and prepares all graph/topology files.
 
@@ -157,7 +140,7 @@ python download_and_prepare_uji.py
 
 Expected output directory: `uji_data/` containing CSVs and `.pkl` graph files.
 
-#### Step 3 — (Optional) Rebuild / Fix the Navigation Graph
+#### Step 3 — Rebuild / Fix the Navigation Graph (Optional)
 
 If the graph has disconnected components or bad edges, regenerate it:
 
@@ -171,7 +154,7 @@ python prune_graph.py
 
 > Run `python diagnose_graph.py` first to check graph health.
 
-#### Step 4 — Train the WiFi Location Classifier (Part 1)
+#### Step 4 — Locator: Train the WiFi Location Classifier (Part 1)
 
 Trains the hierarchical deep neural network on WiFi fingerprints.
 
@@ -181,7 +164,7 @@ python train_part1_hierarchical_v2.py
 
 Output: `models/hierarchical_classifier_best.pth`, `models/scaler.pkl`
 
-#### Step 5 — Train the RL Navigation Agent (Part 2)
+#### Step 5 — Navigator: Train the RL Agent (Part 2)
 
 Trains the PPO agent on the topology graph using the classifier's feature embeddings.
 
@@ -191,7 +174,7 @@ python train_part2_hierarchical.py
 
 Output: `models/ppo_agent.pth`, `models/training_history.png`
 
-#### Step 6 — Visualize a Navigation Trajectory (Optional)
+#### Step 6 — Visualize a Navigation Trajectory (Optional) --> genrates a navigation map (visual)
 
 ```bash
 python trajectory.py
@@ -254,38 +237,6 @@ flutter run
 3. The app scans WiFi, feeds 128 RSSI features into the TFLite model
 4. Your current node is predicted → BFS path is calculated → **AR compass arrow** points toward the next waypoint
 
----
-
-## 📁 Project Structure
-
-```
-THESIS/
-├── config.py                        # Central hyperparameter config
-├── requirements.txt                 # Python dependencies
-├── download_and_prepare_uji.py      # Dataset download & graph builder
-├── train_part1_hierarchical_v2.py   # WiFi classifier training
-├── train_part2_hierarchical.py      # PPO RL agent training
-├── rebuild-graph.py                 # Graph reconstruction (k-NN)
-├── prune_graph.py                   # Edge pruning utility
-├── fix_graph_topology.py            # Topology repair helper
-├── diagnose_graph.py                # Graph health diagnostics
-├── converter-flutter.py             # PyTorch → ONNX export
-├── test.py                          # Graph → JSON export
-├── trajectory.py                    # Trajectory visualization
-├── visualizer.py                    # Map visualizer
-├── uji_data/                        # Processed dataset & graph files
-├── models/                          # Saved model checkpoints
-└── thesis_ar_nav/                   # Flutter mobile application
-    ├── lib/
-    │   ├── main.dart                # UI, AR overlay, venue selection
-    │   ├── ai_engine.dart           # TFLite inference wrapper
-    │   └── navigation_controller.dart  # WiFi scan + BFS routing
-    └── assets/
-        ├── wifi_model.tflite        # University building model
-        ├── railway_model.tflite     # Railway station model
-        ├── map_graph.json           # University building graph
-        └── railway_map.json         # Railway station graph
-```
 
 ---
 
@@ -314,7 +265,7 @@ THESIS/
 
 ---
 
-## 🧰 Dependencies
+## Dependencies
 
 ### Python
 | Package | Purpose |
@@ -336,8 +287,3 @@ THESIS/
 | `flutter_compass` | Device orientation for AR arrow |
 | `vector_math` | 3D bearing calculations |
 
----
-
-## 📜 License
-
-This project was developed as part of an academic thesis. All dataset usage is subject to the [UJIIndoorLoc dataset terms](https://archive.ics.uci.edu/dataset/310/ujiindoorloc).
