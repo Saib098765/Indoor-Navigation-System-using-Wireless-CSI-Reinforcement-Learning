@@ -74,7 +74,7 @@ Finally, navigation instructions are displayed through an AR interface, overlayi
 - **Features:** 520 WAP (WiFi Access Point) RSSI readings per sample, compressed to 128 CSI features in this system
 - **Size:** ~19,000 training samples, ~1,100 validation samples
 
-The `download_and_prepare_uji.py` script handles everything — download, extraction, format conversion, graph topology construction, and train/test splitting — automatically.
+The `download_and_prepare_uji.py` script handles everything — download, extraction, format conversion, graph topology construction, and train/test splitting.
 
 ---
 
@@ -105,11 +105,11 @@ The `download_and_prepare_uji.py` script handles everything — download, extrac
 
 ## Execution Steps:
 
->> Prereq: Python 3.9+, Flutter SDK 3.x (`sdk: ^3.11.4`), Mobile phone with with WiFi scanning support
+> Prereq: Python 3.9+, Flutter SDK 3.x (`sdk: ^3.11.4`), Mobile phone with with WiFi scanning support
 
-## Required Dependencies: 
+### Required Dependencies: 
 
-### Python
+#### Python
 | Package | Purpose |
 |---|---|
 | `torch` | Model training (classifier + PPO) |
@@ -120,7 +120,7 @@ The `download_and_prepare_uji.py` script handles everything — download, extrac
 | `onnx`, `onnxruntime` | Mobile model export |
 | `tqdm` | Training progress bars |
 
-### Flutter
+#### Flutter
 | Package | Purpose |
 |---|---|
 | `tflite_flutter` | On-device AI inference |
@@ -155,8 +155,6 @@ pip install -r requirements.txt
 
 #### Step 2 — Download and prep the data
 
-This downloads the UJIIndoorLoc dataset from UCI and prepares all graph/topology files.
-
 ```bash
 python download_and_prepare_uji.py
 ```
@@ -168,7 +166,7 @@ Expected output directory: `uji_data/` containing CSVs and `.pkl` graph files.
 If the graph has disconnected components or bad edges, regenerate it:
 
 ```bash
-# Rebuild from scratch using k-NN (recommended)
+# Rebuild from scratch using k-NN 
 python rebuild-graph.py
 
 # Or prune long/invalid edges from existing graph
