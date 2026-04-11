@@ -69,9 +69,8 @@ Finally, navigation instructions are displayed through an AR interface, overlayi
 
 ## Dataset — UJIIndoorLoc
 
-- **Source:** [UCI ML Repository — UJIIndoorLoc](https://archive.ics.uci.edu/dataset/310/ujiindoorloc)
 - **Coverage:** 3 university buildings, 5 floors, 748 unique location nodes
-- **Features:** 520 WAP (WiFi Access Point) RSSI readings per sample, compressed to 128 CSI features in this system
+- **Features:** 520 WAP (WiFi Access Point) readings per sample, compressed to 128 features in this system
 - **Size:** ~19,000 training samples, ~1,100 validation samples
 
 The `download_and_prepare_uji.py` script handles everything — download, extraction, format conversion, graph topology construction, and train/test splitting.
@@ -105,7 +104,7 @@ The `download_and_prepare_uji.py` script handles everything — download, extrac
 
 ## Execution Steps:
 
-> Prereq: Python 3.9+, Flutter SDK 3.x (`sdk: ^3.11.4`), Mobile phone with with WiFi scanning support
+> Prereq: Python 3.9+, Flutter SDK 3.x (`sdk: ^3.11.4`), Mobile phone , Intel AX200 or AX210 NIC (internal laptop card or PCIe card), Windows 10 or 11, PicoScenes platform: https://ps.zpj.io/, Both devices (Windows + Android) on the same WiFi network.
 
 ### Required Dependencies: 
 
@@ -128,20 +127,6 @@ The `download_and_prepare_uji.py` script handles everything — download, extrac
 | `camera` | AR camera feed |
 | `flutter_compass` | Device orientation for AR arrow |
 | `vector_math` | 3D bearing calculations |
-
----
-
-### Scripts:
-
-| Component | File(s) | Role |
-|---|---|---|
-| Config | `config.py` | Central PPO hyperparameters & reward shaping |
-| Data Prep | `download_and_prepare_uji.py` | Downloads dataset, builds graph topology |
-| Graph Rebuild | `rebuild-graph.py`, `prune_graph.py` | k-NN graph construction, edge pruning |
-| Classifier | `train_part1_hierarchical_v2.py` | Hierarchical WiFi fingerprint model |
-| RL Agent | `train_part2_hierarchical.py` | PPO agent trained on topology graph |
-| Export | `converter-flutter.py`, `test.py` | ONNX + JSON export for mobile |
-| Mobile App | `thesis_ar_nav/` | Flutter AR navigation UI |
 
 ---
 
@@ -247,19 +232,11 @@ flutter pub get
 #### Step 11 — Connect a Device
 Android cannot access raw CSI — the operating system blocks PHY-layer signal data. True CSI extraction requires a NIC with modified firmware/drivers. The Intel AX200 and AX210, combined with the PicoScenes platform, support CSI extraction on Windows 10/11. The Windows machine runs a local HTTP server that streams 128-dimensional CSI feature vectors to the Flutter app over the local WiFi network.
 --
-Hardware Required
-
-a.Intel AX200 or AX210 NIC (internal laptop card or PCIe card)
-b. Windows 10 or 11
-c. PicoScenes platform: https://ps.zpj.io/
-d. Both devices (Windows + Android) on the same WiFi network
-
 
 #### Step 12 — Install Server Dependencies (Windows)
 ```bash
 pip install picoscenes flask flask-cors numpy scipy
 ```
-If PicoScenes is not available (no Intel AX200/AX210), the server automatically falls back to RSSI mode using  ```netsh``` — useful for testing the pipeline end-to-end.
 
 #### CSI Step 13 — Update dataset for venue
 ```bash
@@ -295,7 +272,7 @@ flutter run
 
 1. Launch → **Select Venue** (University Building or Railway Station)
 2. Select a **Destination** from the available zones
-3. The app scans WiFi, feeds 128 RSSI features into the TFLite model
+3. The app scans WiFi, feeds 128 features into the TFLite model
 4. Your current node is predicted → BFS path is calculated → **AR compass arrow** points toward the next waypoint
 
 ---
