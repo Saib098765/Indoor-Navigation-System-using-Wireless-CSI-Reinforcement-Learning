@@ -12,7 +12,8 @@ dependencies:
   flutter_compass: ^0.8.1   
   tflite_flutter: ^0.12.1  
   wifi_scan: ^0.4.0         
-  vector_math: ^2.1.4  
+  vector_math: ^2.1.4 
+  http: ^1.2.0 
 dev_dependencies:
   flutter_test:
     sdk: flutter

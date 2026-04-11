@@ -244,20 +244,58 @@ cd thesis_ar_nav
 flutter pub get
 ```
 
-#### Step 11 — Connect a Device and Run
+#### Step 11 — Connect a Device
+Android cannot access raw CSI — the operating system blocks PHY-layer signal data. True CSI extraction requires a NIC with modified firmware/drivers. The Intel AX200 and AX210, combined with the PicoScenes platform, support CSI extraction on Windows 10/11. The Windows machine runs a local HTTP server that streams 128-dimensional CSI feature vectors to the Flutter app over the local WiFi network.
+--
+Hardware Required
+
+a.Intel AX200 or AX210 NIC (internal laptop card or PCIe card)
+b. Windows 10 or 11
+c. PicoScenes platform: https://ps.zpj.io/
+d. Both devices (Windows + Android) on the same WiFi network
+
+
+#### Step 12 — Install Server Dependencies (Windows)
+```bash
+pip install picoscenes flask flask-cors numpy scipy
+```
+If PicoScenes is not available (no Intel AX200/AX210), the server automatically falls back to RSSI mode using  ```netsh``` — useful for testing the pipeline end-to-end.
+
+#### CSI Step 13 — Update dataset for venue
+```bash
+python csi_collect_training_data.py --interface "Wi-Fi" --out my_building_csi.csv
+```
+The script prompts for building/floor/room labels at each location and captures CSI for a few seconds. The output CSV is compatible with train_part1_hierarchical_v2.py
+retrain as normal:
 
 ```bash
-flutter run
+python train_part1_hierarchical_v2.py
 ```
 
-> The app requires a **physical Android device** for real WiFi scanning. Emulators will not return real scan results.
+#### Step 14 — Start the CSI Server (Windows)
+```bash
+python csi_collector_windows.py --interface "Wi-Fi" --port 8765
+```
+Find the Windows machine's IP address:
+```
+ipconfig
+# Look for: IPv4 Address . . . . . . . . : 192.168.x.x
+```
+The server exposes:
+a. ```GET /csi``` — returns {"features": [f0..f127], "stale": false, ...}
+b. ```GET /status``` — health check with mode info
+c. ```GET /ping``` — simple connectivity check
 
+#### Step 15: Run the app
+```bash
+flutter pub get
+flutter run
+```
 #### App Flow
 
 1. Launch → **Select Venue** (University Building or Railway Station)
 2. Select a **Destination** from the available zones
 3. The app scans WiFi, feeds 128 RSSI features into the TFLite model
 4. Your current node is predicted → BFS path is calculated → **AR compass arrow** points toward the next waypoint
-
 
 ---

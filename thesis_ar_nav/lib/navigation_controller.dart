@@ -26,7 +26,7 @@ class NavigationController {
   bool isInitializing = true;
 
   String csiServerHost = "192.168.1.100"; // <-- CHANGE
-  int    csiServerPort = 8765;
+  int    csiServerPort = 8765; // <-- CHECK
   bool   _serverReachable = false;
   bool   _lastDataStale   = false;
 
