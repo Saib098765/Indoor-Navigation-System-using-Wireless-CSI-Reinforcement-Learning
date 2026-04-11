@@ -123,7 +123,7 @@ The `download_and_prepare_uji.py` script handles everything — download, extrac
 | Package | Purpose |
 |---|---|
 | `tflite_flutter` | On-device AI inference |
-| `wifi_scan` | WiFi RSSI scanning |
+| `websocket` | CSI scanning |
 | `camera` | AR camera feed |
 | `flutter_compass` | Device orientation for AR arrow |
 | `vector_math` | 3D bearing calculations |
