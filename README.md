@@ -52,7 +52,7 @@ Finally, navigation instructions are displayed through an AR interface, overlayi
 ┌──────────────────────────────────────────────────────────────────┐
 │                   FLUTTER MOBILE APP (thesis_ar_nav)             │
 │                                                                  │
-│  WiFi Scan (128 RSSI features)                                   │
+│  WiFi Scan (128 features)                                        │
 │         │                                                        │
 │         ▼                                                        │
 │  ai_engine.dart  ──►  TFLite Interpreter  ──►  Node ID           │
