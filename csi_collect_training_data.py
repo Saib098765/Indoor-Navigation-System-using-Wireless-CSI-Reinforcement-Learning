@@ -1,19 +1,3 @@
-"""
-Have to run this on the Intel Windows machine BEFORE retraining.
-Walk to each reference point (room), hold position for COLLECTION_SECONDS(ie 2-3s),
-then press Enter to label and save that location.
-
-Produces a CSV compatible with train_part1_hierarchical_v2.py,
-creating a UJI dataset for the venue.
-
-Usage
------
-  python csi_collect_training_data.py --interface Wi-Fi --out my_building_csi.csv
-
-After collecting data at all rooms:
-  python train_part1_hierarchical_v2.py
-"""
-
 import argparse
 import csv
 import os
