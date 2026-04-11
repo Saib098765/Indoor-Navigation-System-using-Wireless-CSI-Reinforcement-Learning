@@ -1,24 +1,3 @@
-"""
-Runs on an Intel AX200 / AX210 Windows machine.
-Collects real WiFi Channel State Information (CSI) using PicoScenes,
-processes it into a 128-dimensional feature vector, and serves it
-over a local HTTP server so the Flutter Android app can fetch it.
-
-Requirements
-------------
-  pip install picoscenes flask flask-cors numpy scipy
-
-Hardware
---------
-  Intel AX200 or AX210 NIC (must support monitor mode via PicoScenes)
-
-Usage
------
-  python csi_collector_windows.py --interface Wi-Fi --port 8765
-
-The Flutter app connects to http://<this-machine-ip>:8765/csi and receives a JSON array of 128 floats.
-"""
-
 import argparse
 import json
 import logging
